@@ -2,7 +2,7 @@
 
 A template for a personal, agent-maintained knowledge monorepo: dense, code-grounded notes that your coding agents read to prime on a topic and write to capture durable findings, so investigations compound instead of evaporating when the session ends.
 
-Three skills drive it: read (`/load-context`), write (`/store-to-hub`), maintain (`/hub-lint`). Works with **Claude Code, Codex, and Cursor** (`AGENTS.md` is the shared contract; the skills install into Claude Code and Codex, and every operation underneath is a plain CLI any agent can run).
+Three skills drive it: read (`/load-context`), write (`/store-to-hub`), maintain (`/hub-lint`). **Agent-agnostic by design**: the contract is `AGENTS.md` (the open standard read natively by Claude Code, Codex, Cursor, Copilot, Gemini CLI, Aider, and most coding agents), and every operation underneath is a plain CLI any agent can run. The slash-command packaging installs into Claude Code and Codex out of the box; the [skills CLI](https://github.com/vercel-labs/skills) distributes it to the rest.
 
 Read the **[field guide](https://eyupcanbodur.github.io/agent-knowledge-hub/hub-guide.html)** for the full why/how/workflow (also at `docs/hub-guide.html` locally).
 
@@ -34,7 +34,7 @@ flowchart TB
     classDef act fill:#fff,stroke:#ea2c00,color:#141312
     classDef gate fill:#fff,stroke:#02745f,color:#141312
 
-    A["agent session<br/>(Claude Code / Codex / Cursor)"]:::act
+    A["any coding agent<br/>(reads AGENTS.md)"]:::act
 
     subgraph READ ["prime: /load-context &lt;topic&gt;"]
         M["match.mjs: exact keyword match<br/>over INDEX one-liners"]:::act

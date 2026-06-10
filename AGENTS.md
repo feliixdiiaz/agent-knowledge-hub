@@ -86,7 +86,7 @@ A session runs in four phases:
 
 ## Harness compatibility
 
-This file (`AGENTS.md`) is the contract, and Claude Code, Codex, and Cursor all read it natively (`CLAUDE.md` is a redirect). The skills (`/load-context`, `/store-to-hub`, `/hub-lint`) are Claude Code / Codex conveniences installed by `./install.sh`; every operation underneath is harness-agnostic and any agent can run it directly:
+This file (`AGENTS.md`) is the contract, and it is the open standard most coding agents read natively: Claude Code, Codex, Cursor, Copilot, Gemini CLI, Aider, and others (`CLAUDE.md` is a redirect). The skills (`/load-context`, `/store-to-hub`, `/hub-lint`) are Claude Code / Codex conveniences installed by `./install.sh`; every operation underneath is harness-agnostic and any agent can run it directly:
 
 ```bash
 node skills/load-context/bin/match.mjs "<topic>" --json    # retrieve
