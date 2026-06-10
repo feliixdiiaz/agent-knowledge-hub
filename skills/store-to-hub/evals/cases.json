@@ -1,0 +1,16 @@
+{
+  "cases": [
+    {
+      "topic": "env var token unauthenticated",
+      "expectHit": "env-var-not-read.md"
+    },
+    {
+      "topic": "shared package build output stale",
+      "expectHit": "prebuilt-lib-indirection.md"
+    },
+    {
+      "topic": "kubernetes ingress controller cert rotation helm",
+      "expectEmpty": true
+    }
+  ]
+}

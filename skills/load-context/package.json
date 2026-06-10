@@ -1,0 +1,11 @@
+{
+  "name": "load-context-skill",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "Deterministic hub-knowledge retrieval skill for resuming work by topic.",
+  "scripts": {
+    "test": "node --test",
+    "eval": "node evals/run.mjs"
+  }
+}

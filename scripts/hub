@@ -1,0 +1,33 @@
+#!/bin/bash
+# hub - agent-knowledge-hub sub-hub CLI. Commands: create <name>, list.
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+HUBS="$ROOT/hubs"; TPL="$ROOT/template"
+
+count_notes() {
+  find "$1" -maxdepth 1 -name '*.md' \
+    ! -name INDEX.md ! -name AGENTS.md ! -name CLAUDE.md ! -name README.md ! -name log.md \
+    | wc -l | tr -d ' '
+}
+
+cmd="${1:-}"
+case "$cmd" in
+  list)
+    for d in "$HUBS"/*/; do
+      [ -d "$d" ] || continue
+      echo "$(basename "$d") ($(count_notes "$d") notes)"
+    done
+    ;;
+  create)
+    name="${2:-}"; [ -n "$name" ] || { echo "usage: hub create <name>"; exit 2; }
+    dest="$HUBS/$name"
+    [ -e "$dest" ] && { echo "hub '$name' exists"; exit 1; }
+    mkdir -p "$dest"
+    sed "s/{{HUB_NAME}}/$name/g" "$TPL/AGENTS.md" > "$dest/AGENTS.md"
+    sed "s/{{HUB_NAME}}/$name/g" "$TPL/INDEX.md" > "$dest/INDEX.md"
+    printf '@AGENTS.md\n' > "$dest/CLAUDE.md"
+    echo "created hub: hubs/$name"
+    ;;
+  *)
+    echo "hub <create <name> | list>"; exit 2 ;;
+esac

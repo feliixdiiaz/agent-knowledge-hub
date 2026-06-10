@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>agent-knowledge-hub field guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300..700;1,400..600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    /* warm neutral palette */
+    --paper:#fcfaf8;      /* grey-5  / v2 bg-primary */
+    --paper-2:#f7f2ed;    /* grey-10 / bg-tertiary */
+    --ink:#141312;        /* grey-100 / text-primary */
+    --muted:#6d645a;      /* grey-60 / text-secondary */
+    --faint:#a7988a;      /* grey-50 / text-tertiary */
+    --rule:#eee5dd;       /* grey-20 / stroke-tertiary */
+    --accent:#ea2c00;     /* red-55  / brand-primary */
+    --accent-2:#02745f;   /* teal-55 */
+    --chip:#242220;       /* grey-90 / bg-inverted-secondary */
+    --r:14px;             /* panel radius (v2 radius-xl is 16px) */
+    --maxw:1080px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Hanken Grotesk",system-ui,sans-serif;
+    font-weight:400;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    position:relative;
+    overflow-x:hidden;
+  }
+  /* grain overlay */
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
+    opacity:.035;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+
+  /* ---- typography ---- */
+  h1,h2,h3{font-family:"Hanken Grotesk",sans-serif;letter-spacing:-.01em}
+  .display,.hero h1{font-family:"Hanken Grotesk",sans-serif}
+  .eyebrow{
+    font-family:"JetBrains Mono",monospace;
+    font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--accent);font-weight:500;
+  }
+  .lede{font-size:1.22rem;color:var(--muted);max-width:90ch;line-height:1.55}
+  p{max-width:96ch}
+  a{color:var(--accent);text-decoration:none}
+
+  /* ---- top bar ---- */
+  .topbar{
+    border-bottom:1px solid var(--rule);
+    display:flex;justify-content:space-between;align-items:baseline;
+    padding:18px 28px;max-width:var(--maxw);margin:0 auto;
+  }
+  .brand{font-family:"JetBrains Mono",monospace;font-weight:600;letter-spacing:.02em}
+  .brand b{color:var(--accent)}
+  .topnav{font-family:"JetBrains Mono",monospace;font-size:.78rem;color:var(--muted)}
+  .topnav a{color:var(--muted);margin-left:22px}
+  .topnav a:hover{color:var(--ink)}
+
+  /* ---- hero ---- */
+  .hero{padding:96px 0 64px;border-bottom:1px solid var(--rule)}
+  .hero h1{
+    font-size:clamp(3rem,9vw,6.6rem);
+    font-weight:340;line-height:.96;letter-spacing:-.02em;
+    margin:18px 0 26px;
+  }
+  .hero h1 em{font-family:"Hanken Grotesk",sans-serif;font-style:italic;font-weight:400;color:var(--accent)}
+  .hero-grid{display:grid;grid-template-columns:1.4fr .9fr;gap:48px;align-items:end}
+  @media(max-width:760px){.hero-grid{grid-template-columns:1fr}}
+  .stamp{
+    border:1px solid var(--rule);border-radius:var(--r);padding:18px 20px;
+    background:linear-gradient(180deg,var(--paper-2),transparent);
+  }
+  .stamp .k{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+  .stamp .v{font-family:"Hanken Grotesk",sans-serif;font-size:1.05rem;display:block;margin-top:2px}
+  .stamp-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dotted var(--rule)}
+  .stamp-row:last-child{border-bottom:none}
+  .stamp-row .lbl{font-family:"JetBrains Mono",monospace;font-size:.74rem;color:var(--muted)}
+  .stamp-row .val{font-family:"JetBrains Mono",monospace;font-size:.74rem;color:var(--ink);font-weight:500}
+
+  /* ---- masthead (functional, not a hero) ---- */
+  .masthead{padding:30px 0 26px;border-bottom:1px solid var(--rule)}
+  .masthead h1{font-size:1.9rem;font-weight:400;line-height:1.05;margin:5px 0 9px}
+  .tagline{font-size:1rem;color:var(--muted);max-width:96ch;margin-bottom:16px}
+  .tagline b{color:var(--ink);font-weight:600}
+  .prereq{font-size:.85rem;color:var(--faint);max-width:96ch;margin-bottom:16px}
+  .prereq b{color:var(--muted);font-weight:600}
+  .exnote{background:var(--paper-2);border:1px solid var(--rule);border-radius:var(--r);padding:22px 24px;margin-top:8px}
+  .exnote .fn{font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--accent);letter-spacing:.03em;margin-bottom:10px}
+  .exnote h4{font-size:1.05rem;font-weight:600;margin:0 0 8px}
+  .exnote .tldr{font-size:.92rem;color:var(--ink);margin-bottom:10px;max-width:none}
+  .exnote .body{font-size:.88rem;color:var(--muted);max-width:none}
+  .quickref{display:flex;flex-wrap:wrap;gap:9px}
+  .qr{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--rule);border-radius:999px;padding:5px 13px 5px 6px;font-size:.8rem;color:var(--muted);background:var(--paper-2)}
+  .qr .qcmd{font-family:"JetBrains Mono",monospace;font-weight:600;font-size:.78rem;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:999px;padding:3px 9px}
+  .qr:hover{border-color:var(--accent);color:var(--ink)}
+
+  /* ---- sections ---- */
+  section{padding:42px 0;border-bottom:1px solid var(--rule)}
+  .sec-head{display:flex;gap:16px;align-items:baseline;margin-bottom:22px}
+  .sec-num{font-family:"JetBrains Mono",monospace;color:var(--accent);font-size:.8rem;font-weight:600;padding-top:4px}
+  .sec-head h2{font-size:1.45rem;font-weight:500;letter-spacing:-.01em;line-height:1.1}
+  .sec-head .sub{color:var(--muted);margin-top:3px;font-size:.95rem}
+
+  /* ---- why cards ---- */
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:var(--r);overflow:hidden}
+  @media(max-width:760px){.cards{grid-template-columns:1fr}}
+  .card{background:var(--paper);padding:30px 26px}
+  .card .ico{margin-bottom:18px;color:var(--accent)}
+  .card h3{font-size:1.3rem;font-weight:480;margin-bottom:10px;line-height:1.1}
+  .card p{font-size:.95rem;color:var(--muted);max-width:none}
+  .card .tag{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);display:block;margin-bottom:14px}
+
+  /* ---- diagrams ---- */
+  .diagram{background:var(--paper-2);border:1px solid var(--rule);border-radius:var(--r);padding:30px;margin-top:8px}
+  .diagram-title{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:20px}
+  .tree{font-family:"JetBrains Mono",monospace;font-size:.8rem;line-height:1.9;color:var(--muted);margin:0;white-space:pre;overflow-x:auto}
+  .tree .root{color:var(--ink);font-weight:700}
+  .tree .eng{color:var(--accent-2);font-weight:600}
+  .tree .dx{color:var(--accent);font-weight:600}
+  .tree .w{color:var(--accent);font-weight:600}
+  .tree .c{color:var(--faint)}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+  @media(max-width:820px){.two{grid-template-columns:1fr}}
+  svg{display:block;width:100%;height:auto}
+  .cap{font-size:.9rem;color:var(--muted);margin-top:14px}
+
+  /* ---- routing rule ---- */
+  .rule-box{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:var(--r);overflow:hidden;margin-top:24px}
+  @media(max-width:680px){.rule-box{grid-template-columns:1fr}}
+  .rule-cell{background:var(--paper);padding:24px}
+  .rule-cell h4{font-family:"Hanken Grotesk",sans-serif;font-weight:500;font-size:1.25rem;margin-bottom:6px}
+  .rule-cell.eng h4{color:var(--accent-2)}
+  .rule-cell.dx h4{color:var(--accent)}
+  .rule-cell .q{font-family:"JetBrains Mono",monospace;font-size:.74rem;color:var(--muted);margin-bottom:14px}
+  .rule-cell ul{list-style:none;font-size:.92rem;color:var(--muted)}
+  .rule-cell li{padding:4px 0 4px 18px;position:relative}
+  .rule-cell li::before{content:"›";position:absolute;left:0;color:var(--faint)}
+
+  /* ---- commands ---- */
+  .cmd{border:1px solid var(--rule);border-radius:var(--r);margin-bottom:18px;overflow:hidden;background:var(--paper)}
+  .cmd-head{display:flex;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid var(--rule);background:linear-gradient(180deg,var(--paper-2),transparent)}
+  .cmd-chip{font-family:"JetBrains Mono",monospace;font-weight:600;font-size:.92rem;background:var(--chip);color:var(--paper);padding:6px 12px;border-radius:3px;white-space:nowrap}
+  .cmd-head .when{font-size:.92rem;color:var(--muted)}
+  .cmd-body{padding:18px 22px;display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media(max-width:680px){.cmd-body{grid-template-columns:1fr}}
+  .cmd-body h4{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:8px;font-weight:500}
+  .cmd-body p{font-size:.93rem;color:var(--muted);max-width:none}
+  pre{font-family:"JetBrains Mono",monospace;font-size:.8rem;background:var(--chip);color:#f7f2ed;padding:14px 16px;border-radius:3px;overflow-x:auto;line-height:1.7}
+  pre .c{color:#81baaf}
+  pre .p{color:#ffc522}
+  code{font-family:"JetBrains Mono",monospace;font-size:.85em;background:var(--paper-2);padding:1px 5px;border-radius:3px;border:1px solid var(--rule)}
+
+  .mini{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:var(--r);overflow:hidden;margin-top:26px}
+  @media(max-width:680px){.mini{grid-template-columns:1fr}}
+  .mini div{background:var(--paper);padding:18px 20px}
+  .mini .mc{font-family:"JetBrains Mono",monospace;font-size:.85rem;color:var(--ink);font-weight:500}
+  .mini .md{font-size:.88rem;color:var(--muted);margin-top:4px}
+
+  /* ---- sources ---- */
+  .srcs{display:grid;grid-template-columns:repeat(auto-fit,minmax(218px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:var(--r);overflow:hidden;margin-top:8px}
+  .src{background:var(--paper);padding:20px 22px}
+  .src .sh{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .src .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex:none}
+  .src .sn{font-family:"JetBrains Mono",monospace;font-size:.82rem;font-weight:600;color:var(--ink)}
+  .src p{font-size:.88rem;color:var(--muted);max-width:none}
+
+  /* ---- start band ---- */
+  .start{background:var(--chip);color:#f7f2ed;border-radius:var(--r);padding:32px;margin-top:30px}
+  .start h3{font-family:"Hanken Grotesk",sans-serif;color:#fcfaf8;font-weight:480;font-size:1.5rem;margin-bottom:6px}
+  .start>p{color:#d5cbc0;font-size:.96rem;max-width:none;margin-bottom:20px}
+  .start ol{list-style:none;counter-reset:s;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  @media(max-width:680px){.start ol{grid-template-columns:1fr}}
+  .start li{counter-increment:s;position:relative;padding-left:36px;font-size:.9rem;color:#eee5dd;line-height:1.5}
+  .start li::before{content:counter(s);position:absolute;left:0;top:-3px;width:24px;height:24px;border:1px solid #534d46;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"JetBrains Mono",monospace;font-size:.74rem;color:#4e9e8f}
+  .start code{background:#393633;color:#f7f2ed;border-color:#393633}
+
+  footer{padding:48px 0 70px}
+  .foot{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:16px;font-family:"JetBrains Mono",monospace;font-size:.76rem;color:var(--muted)}
+  .foot b{color:var(--ink)}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(16px);animation:rise .8s cubic-bezier(.2,.7,.2,1) forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+  .d1{animation-delay:.05s}.d2{animation-delay:.15s}.d3{animation-delay:.25s}.d4{animation-delay:.35s}.d5{animation-delay:.45s}
+  @media(prefers-reduced-motion:reduce){.reveal{animation:none;opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">agent<b>-</b>knowledge<b>-</b>hub</div>
+  <nav class="topnav">
+    <a href="#why">why</a>
+    <a href="#how">how</a>
+    <a href="#loop">session</a>
+    <a href="#sources">sources</a>
+    <a href="#jump">jumpstart</a>
+    <a href="#reading">grounding</a>
+  </nav>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">personal knowledge monorepo</div>
+    <h1>agent-knowledge-hub</h1>
+    <p class="tagline">Dense, code-grounded notes an agent reads and writes, so investigations compound instead of evaporating at session end. The template ships one <b>example</b> sub-hub with sample notes; you clear it and create sub-hubs for the domains you work in.</p>
+    <p class="prereq">Works with <b>Claude Code, Codex, and Cursor</b>: <code>AGENTS.md</code> is the shared contract all three read. The three commands below are Claude Code skills (installed by <code>./install.sh</code>); the same operations are plain CLIs any agent can run (<code>bin/match.mjs</code>, <code>hub-lint.sh</code>). Notes are plain markdown; nothing to host.</p>
+    <div class="quickref">
+      <a class="qr" href="#jump"><span class="qcmd">/load-context</span> read</a>
+      <a class="qr" href="#jump"><span class="qcmd">/store-to-hub</span> write</a>
+      <a class="qr" href="#jump"><span class="qcmd">/hub-lint</span> maintain</a>
+      <a class="qr" href="#sources"><span class="qcmd">sources</span> where data comes from</a>
+    </div>
+  </div>
+</header>
+
+<!-- ============ WHY ============ -->
+<section id="why">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <div>
+        <h2>Why a hub at all</h2>
+        <div class="sub">Three problems it solves that a fresh chat does not.</div>
+      </div>
+    </div>
+    <div class="cards">
+      <article class="card">
+        <div class="ico">
+          <svg width="44" height="44" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.4">
+            <circle cx="10" cy="32" r="4"/><circle cx="22" cy="20" r="4"/><circle cx="34" cy="10" r="4"/>
+            <path d="M13 29 19 23M25 17 31 13" stroke-dasharray="1 3"/>
+            <path d="M6 38c8-2 14-8 16-16 2-7 6-12 14-14" opacity=".4"/>
+          </svg>
+        </div>
+        <span class="tag">compounding</span>
+        <h3>Knowledge that builds on itself</h3>
+        <p>Unlike search-on-every-question, a hub pre-compiles what you learned into structured notes. The answer is written down once, then reused, instead of being rediscovered from scratch each time.</p>
+      </article>
+      <article class="card">
+        <div class="ico">
+          <svg width="44" height="44" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.4">
+            <rect x="6" y="8" width="32" height="5" rx="1"/>
+            <rect x="10" y="20" width="24" height="5" rx="1" opacity=".6"/>
+            <rect x="14" y="32" width="16" height="5" rx="1" opacity=".3"/>
+          </svg>
+        </div>
+        <span class="tag">progressive disclosure</span>
+        <h3>Read the index, not the library</h3>
+        <p>One read of the INDEX shows every note in a line each. The agent opens a TL;DR only if it looks relevant, and the full note only when the work needs it. Three tiers, smallest first.</p>
+      </article>
+      <article class="card">
+        <div class="ico">
+          <svg width="44" height="44" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.4">
+            <rect x="7" y="7" width="30" height="30" rx="2"/>
+            <path d="M7 28h30" opacity=".5"/>
+            <path d="M12 28v-7M19 28v-12M26 28v-5M33 28v-9"/>
+          </svg>
+        </div>
+        <span class="tag">context budget</span>
+        <h3>Lean by construction</h3>
+        <p>An agent has a finite context window. Dumping every note rots it. A hub hands over a one-line summary plus a short TL;DR, so the agent spends its budget on the work, not on wading through files.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW ============ -->
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <div>
+        <h2>How it is built</h2>
+        <div class="sub">One umbrella, full sub-hubs, and a strict read-ladder.</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="diagram">
+        <div class="diagram-title">repository shape</div>
+<pre class="tree"><span class="root">agent-knowledge-hub/</span>
+├─ AGENTS.md · CONTEXT.md · INDEX.md  <span class="c">charter · glossary · sub-hub index</span>
+├─ scripts/hub · .claude/hooks · template · docs/
+└─ hubs/
+   ├─ <span class="eng">example/</span>  <span class="c">ships with the template; replace with your own</span>
+   │  ├─ prebuilt-lib-indirection  <span class="c">shared-package edits need a rebuild to reach the app</span>
+   │  └─ env-var-not-read  <span class="c">tool reads its config file, not your exported env var</span>
+   ├─ <span class="dx">your-domain/</span>  <span class="c">e.g. how your product systems behave</span>
+   │  ├─ ...notes  <span class="c">one finding per file, one INDEX line each</span>
+   │  └─ <span class="w">works/</span>  <span class="c">active multi-step projects</span>
+   │     └─ <span class="w">some-feature/</span>  <span class="c">numbered files telling the project story</span>
+   └─ <span class="dx">your-tooling/</span>  <span class="c">e.g. dev-environment friction + fixes</span>
+</pre>
+        <p style="font-size:.85rem;color:var(--muted);margin-top:16px;max-width:none"><b style="color:var(--ink)">notes</b> are atomic, cross-project, findable. <b style="color:var(--ink)">works/</b> are goal-bound projects (the live, multi-step research). Both route to whichever sub-hub's charter claims them.</p>
+      </div>
+
+      <div class="diagram">
+        <div class="diagram-title">the read-ladder</div>
+        <svg viewBox="0 0 380 260" font-family="Hanken Grotesk, sans-serif">
+          <style>
+            .tier{fill:#f7f2ed;stroke:#eee5dd;stroke-width:1}
+            .t1{fill:#ea2c00}.tt{fill:#141312;font-weight:600}
+            .td{fill:#6d645a;font-size:11px}
+            .mono{font-family:"JetBrains Mono",monospace;font-size:10px;fill:#6d645a}
+          </style>
+          <rect class="tier" x="8" y="14" width="364" height="62" rx="3"/>
+          <circle cx="30" cy="34" r="9" fill="#ea2c00"/><text x="30" y="38" text-anchor="middle" fill="#fcfaf8" font-size="11" font-weight="700">1</text>
+          <text class="tt" x="50" y="34" font-size="14">INDEX one-liner</text>
+          <text class="td" x="50" y="52">One read. Every note described in a line. Triage here.</text>
+          <text class="mono" x="50" y="68">1 read = all N notes</text>
+
+          <path d="M190 76 L190 92" stroke="#c0b4a8" stroke-width="1.2" marker-end="url(#a)"/>
+          <defs><marker id="a" markerWidth="8" markerHeight="8" refX="4" refY="6" orient="auto"><path d="M1 1 L4 6 L7 1" fill="none" stroke="#c0b4a8" stroke-width="1.2"/></marker></defs>
+
+          <rect class="tier" x="28" y="96" width="324" height="58" rx="3"/>
+          <circle cx="50" cy="116" r="9" fill="#ff5832"/><text x="50" y="120" text-anchor="middle" fill="#fcfaf8" font-size="11" font-weight="700">2</text>
+          <text class="tt" x="70" y="116" font-size="14">## TL;DR</text>
+          <text class="td" x="70" y="134">First lines of a note. Read only if the one-liner looks relevant.</text>
+
+          <path d="M210 154 L210 170" stroke="#c0b4a8" stroke-width="1.2" marker-end="url(#a)"/>
+
+          <rect class="tier" x="48" y="174" width="304" height="58" rx="3"/>
+          <circle cx="70" cy="194" r="9" fill="#4e9e8f"/><text x="70" y="198" text-anchor="middle" fill="#141312" font-size="11" font-weight="700">3</text>
+          <text class="tt" x="90" y="194" font-size="14">Full note body</text>
+          <text class="td" x="90" y="212">Opened only when the work actually needs the detail.</text>
+        </svg>
+      </div>
+    </div>
+
+    <h3 style="font-weight:480;font-size:1.5rem;margin:42px 0 6px">Notes vs works</h3>
+    <p style="color:var(--muted)">Two kinds of content. A <b style="color:var(--ink)">note</b> is atomic and cross-project, findable in the INDEX (evergreen-note style). A <b style="color:var(--ink)">work</b> is a goal-bound project: a <code>works/&lt;slug&gt;/</code> folder of numbered files plus status. Both route by charter, so a tooling project lives in your tooling hub, not your product hub. When an investigation inside a work is reusable beyond it, <b style="color:var(--ink)">promote</b> it to a note and link it, so it stays findable; project-specific detail stays in the work. The test: would future-you search for it independent of the project?</p>
+
+    <h3 style="font-weight:480;font-size:1.5rem;margin:42px 0 6px">Routing: charters decide, and the hub set grows</h3>
+    <p style="color:var(--muted)">There is no fixed list of sub-hubs; you create one per domain you work in. Each sub-hub's <code>AGENTS.md</code> charter declares its scope, and a finding goes to the hub whose charter claims it. One topic never splits across hubs. <b style="color:var(--ink)">If no charter fits, that is the signal to create a new sub-hub</b> (<code>./scripts/hub create &lt;name&gt;</code>); <code>/store-to-hub</code> proposes this automatically instead of forcing a bad fit. The two charters below are just this instance's examples of scope declarations:</p>
+    <div class="rule-box">
+      <div class="rule-cell dx">
+        <h4>your-tooling (example)</h4>
+        <div class="q">charter scope: local env, tooling, auth, IDE, CLI friction</div>
+        <ul>
+          <li>the "this wasted my time, automate it" pile</li>
+          <li>example note: env-var-not-read</li>
+        </ul>
+      </div>
+      <div class="rule-cell eng">
+        <h4>your-domain (example)</h4>
+        <div class="q">charter scope: how your product systems behave, code-grounded</div>
+        <ul>
+          <li>your services, your repos</li>
+          <li>example note: prebuilt-lib-indirection</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="font-weight:480;font-size:1.5rem;margin:42px 0 6px">What a note looks like</h3>
+    <p style="color:var(--muted)">One real note (shape defined in <code>docs/note-format.md</code>), then how <code>/load-context</code> surfaces it later, INDEX match plus TL;DR, never a full-file dump. Two things never go in a note: <b style="color:var(--ink)">PHI</b> and <b style="color:var(--ink)">credentials</b>. Cite the pointer (encounter ID, collection path, Keychain item), never the payload; the write gate rejects secret-shaped strings outright.</p>
+    <div class="exnote">
+      <div class="fn">hubs/example/prebuilt-lib-indirection.md</div>
+      <h4># Shared package edits do not reach the running app</h4>
+      <div class="tldr"><b>## TL;DR</b> Editing a shared package's <code>src/</code> changes nothing at runtime when consumers import the prebuilt <code>lib/</code> output. Rebuild (or run the watcher) after any edit. Symptom: source looks right, app unchanged; cause: the build artifact.</div>
+      <div class="body">Then: body sections citing code with line ranges, a verified-vs-inferred section, sources, and related notes. The shape is the same for every note.</div>
+    </div>
+    <pre style="margin-top:14px"><span class="c"># resuming the work weeks later</span>
+/load-context package rebuild
+
+<span class="c"># one INDEX read, top matches with their TL;DR, you pick what to open:</span>
+→ prebuilt-lib-indirection.md   shared-package edits need a rebuild to reach the app
+→ env-var-not-read.md           tool reads its config file, not your exported env var</pre>
+  </div>
+</section>
+
+<!-- ============ THE LOOP ============ -->
+<section id="loop">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <div>
+        <h2>A working session</h2>
+        <div class="sub">Four phases. Prime, gather, capture, maintain.</div>
+      </div>
+    </div>
+
+    <div class="diagram">
+      <div class="diagram-title">the loop</div>
+      <svg viewBox="0 0 760 150" font-family="Hanken Grotesk, sans-serif">
+        <style>
+          .ph{fill:#fcfaf8;stroke:#eee5dd;stroke-width:1}
+          .pn{font-family:"JetBrains Mono",monospace;font-size:10px;fill:#ea2c00;font-weight:600}
+          .pt{fill:#141312;font-weight:600;font-size:14px;font-family:"Hanken Grotesk",sans-serif}
+          .pc{font-family:"JetBrains Mono",monospace;font-size:9.5px;fill:#6d645a}
+          .pd{fill:#6d645a;font-size:10px}
+          .arr{stroke:#c0b4a8;stroke-width:1.3;fill:none}
+        </style>
+        <g>
+          <rect class="ph" x="6" y="20" width="170" height="100" rx="3"/>
+          <text class="pn" x="22" y="42">01</text>
+          <text class="pt" x="22" y="60">Prime</text>
+          <text class="pc" x="22" y="80">/load-context &lt;topic&gt;</text>
+          <text class="pd" x="22" y="98">pull existing notes,</text>
+          <text class="pd" x="22" y="111">start warm</text>
+        </g>
+        <path class="arr" d="M176 70 H196" marker-end="url(#la)"/>
+        <defs><marker id="la" markerWidth="9" markerHeight="9" refX="5" refY="5" orient="auto"><path d="M1 1 L6 5 L1 9" fill="none" stroke="#c0b4a8" stroke-width="1.3"/></marker></defs>
+        <g>
+          <rect class="ph" x="196" y="20" width="170" height="100" rx="3"/>
+          <text class="pn" x="212" y="42">02</text>
+          <text class="pt" x="212" y="60">Gather</text>
+          <text class="pc" x="212" y="80">code / slack / datadog</text>
+          <text class="pd" x="212" y="98">do the work, cite</text>
+          <text class="pd" x="212" y="111">sources as you go</text>
+        </g>
+        <path class="arr" d="M366 70 H386" marker-end="url(#la)"/>
+        <g>
+          <rect class="ph" x="386" y="20" width="170" height="100" rx="3"/>
+          <text class="pn" x="402" y="42">03</text>
+          <text class="pt" x="402" y="60">Capture</text>
+          <text class="pc" x="402" y="80">/store-to-hub</text>
+          <text class="pd" x="402" y="98">file the finding if</text>
+          <text class="pd" x="402" y="111">it clears the bar</text>
+        </g>
+        <path class="arr" d="M556 70 H576" marker-end="url(#la)"/>
+        <g>
+          <rect class="ph" x="576" y="20" width="170" height="100" rx="3"/>
+          <text class="pn" x="592" y="42">04</text>
+          <text class="pt" x="592" y="60">Maintain</text>
+          <text class="pc" x="592" y="80">/hub-lint</text>
+          <text class="pd" x="592" y="98">catch rot before</text>
+          <text class="pd" x="592" y="111">you trust a note</text>
+        </g>
+      </svg>
+    </div>
+
+    <h3 style="font-weight:480;font-size:1.5rem;margin:42px 0 6px">It maintains itself</h3>
+    <p style="color:var(--muted)">Phase 04 mostly runs without you. A weekly scheduled job lints every sub-hub (0.3s, deterministic), snapshots any drift into git, checks <b style="color:var(--ink)">citation drift</b> (does a note cite code that changed, or was deleted, upstream since the note was written?), and only notifies when something needs attention: a hard failure, or warnings growing. The LLM pass stays on demand, because judgment output belongs in front of a human. A knowledge base that is not health-checked becomes confidently wrong; the loop exists so staleness surfaces before you trust it.</p>
+
+    <h3 style="font-weight:480;font-size:1.5rem;margin:42px 0 6px">Two memory layers, not one</h3>
+    <p style="color:var(--muted)"><a href="https://github.com/thedotmack/claude-mem"><b style="color:var(--ink)">claude-mem</b></a> is a Claude Code plugin that records your sessions automatically: it hooks into every conversation, compresses what happened (what you investigated, what you changed, what worked) into searchable observations, and injects the relevant ones back into future sessions in that project. You never invoke it; it just runs. That makes it a perfect <b style="color:var(--ink)">safety net</b>, and a poor <b style="color:var(--ink)">knowledge base</b>: its memory is episodic ("on Tuesday we debugged X and tried Y"), machine-summarized, unverified, and noisy, because it keeps everything, including the dead ends.</p>
+    <p style="color:var(--muted);margin-top:12px">The hub is the opposite on every axis, and that contrast is the design:</p>
+    <div class="rule-box">
+      <div class="rule-cell">
+        <h4 style="color:var(--muted)">claude-mem · the safety net</h4>
+        <div class="q">"what did we do, and when?"</div>
+        <ul>
+          <li>passive: captures every session automatically</li>
+          <li>episodic: a timeline of what happened</li>
+          <li>machine-summarized, unverified, keeps the dead ends</li>
+          <li>queried when you wonder "did we already solve this?"</li>
+        </ul>
+      </div>
+      <div class="rule-cell">
+        <h4 style="color:var(--accent)">the hub · the compounding asset</h4>
+        <div class="q">"how does X actually work?"</div>
+        <ul>
+          <li>deliberate: written only on /store-to-hub, after your confirm</li>
+          <li>semantic: distilled conclusions, not session history</li>
+          <li>human-verified, code-cited, dead ends excluded</li>
+          <li>read at the start of work, via /load-context</li>
+        </ul>
+      </div>
+    </div>
+    <p style="color:var(--muted);margin-top:18px">Why both? Because each lets the other be good at its job. The hub can stay <b style="color:var(--ink)">selective</b> (file only findings that clear the bar: 30+ minutes, reusable, non-obvious) precisely because claude-mem already backstops everything below the bar; nothing is lost by not filing it. And claude-mem can stay an unfiltered firehose because the durable conclusions get promoted out of it into the hub. No claude-mem? The split still holds with any passive session-memory, or none; the hub just becomes your only layer and the filing bar drops accordingly.</p>
+  </div>
+</section>
+
+<!-- ============ SOURCES ============ -->
+<section id="sources">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <div>
+        <h2>Where the knowledge comes from</h2>
+        <div class="sub">A note is distilled from what you read while working. These are the wells.</div>
+      </div>
+    </div>
+    <div class="srcs">
+      <div class="src"><div class="sh"><span class="dot"></span><span class="sn">code · LSP / ripgrep</span></div><p>How a system actually works. The backbone of any note: cite file:line, quote the lines.</p></div>
+      <div class="src"><div class="sh"><span class="dot"></span><span class="sn">github · PRs / commits</span></div><p>Why a change was made. Decisions and the context behind the code, not just the code.</p></div>
+      <div class="src"><div class="sh"><span class="dot"></span><span class="sn">slack</span></div><p>Tribal knowledge: who owns what, history, the reasons that never made it into a doc.</p></div>
+      <div class="src"><div class="sh"><span class="dot"></span><span class="sn">notion</span></div><p>Specs, onboarding, the engineer handbook. The written record to reconcile code against.</p></div>
+      <div class="src"><div class="sh"><span class="dot"></span><span class="sn">linear</span></div><p>Scope, status, and the ticket trail behind a piece of work.</p></div>
+      <div class="src"><div class="sh"><span class="dot"></span><span class="sn">datadog</span></div><p>Runtime truth: logs, traces, metrics. What the system does in production, not just in source.</p></div>
+      <div class="src"><div class="sh"><span class="dot"></span><span class="sn">claude-mem</span></div><p>Your own past sessions. "Did I already solve this?" before investigating from scratch.</p></div>
+    </div>
+    <p style="color:var(--muted);margin-top:20px"><b style="color:var(--ink)">Starting from empty?</b> Do not backfill everything. Seed the hub with the last three or four investigations that cost you 30+ minutes, then let it grow as you work. The hub earns its keep by accruing, not by being complete on day one.</p>
+  </div>
+</section>
+
+<!-- ============ JUMPSTART ============ -->
+<section id="jump">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <div>
+        <h2>Jumpstart</h2>
+        <div class="sub">Three commands cover the whole loop: read, write, maintain.</div>
+      </div>
+    </div>
+
+    <div class="cmd">
+      <div class="cmd-head">
+        <span class="cmd-chip">/load-context</span>
+        <span class="when">resuming work, or spinning up on a topic after a break</span>
+      </div>
+      <div class="cmd-body">
+        <div>
+          <h4>what it does</h4>
+          <p>Matches your topic against every sub-hub INDEX, returns the top notes with their one-line summary and TL;DR as a jump-start, and dives into full notes only on demand. Typo or half-remembered name? When exact matching finds nothing it falls back to <code>fzf</code> (if installed) and presents results as "did you mean". No topic at all? It shows the whole catalog and lets you point.</p>
+        </div>
+        <div>
+          <h4>try it</h4>
+          <pre><span class="c"># get back into a project fast</span>
+/load-context patient consent
+
+<span class="c"># or any topic you have notes on</span>
+/load-context npm token auth</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd">
+      <div class="cmd-head">
+        <span class="cmd-chip">/store-to-hub</span>
+        <span class="when">after an investigation produces a durable learning</span>
+      </div>
+      <div class="cmd-body">
+        <div>
+          <h4>what it does</h4>
+          <p>Classifies the right sub-hub from each charter, dedupes against the INDEX, then shows you a diff and waits. On confirm it writes the note, updates the INDEX, appends a <code>log.md</code> line, and runs the lint. Never writes silently.</p>
+        </div>
+        <div>
+          <h4>try it</h4>
+          <pre><span class="c"># synthesize from the conversation</span>
+/store-to-hub
+
+<span class="c"># or hand it the finding</span>
+/store-to-hub "admin roles
+live in firestore accounts collection"</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="cmd">
+      <div class="cmd-head">
+        <span class="cmd-chip">/hub-lint</span>
+        <span class="when">before trusting hub notes for important work</span>
+      </div>
+      <div class="cmd-body">
+        <div>
+          <h4>what it does</h4>
+          <p>Runs the deterministic gate first (orphans, broken links, missing INDEX or log entries, em dashes, secret-shaped strings, missing TL;DRs, stale small hubs, stalled works), then an LLM pass for what scripts cannot see: contradictions between notes, duplicate topics, stale claims, misrouted or buried findings. Proposes fixes, never applies them.</p>
+        </div>
+        <div>
+          <h4>try it</h4>
+          <pre><span class="c"># one hub</span>
+/hub-lint example
+
+<span class="c"># or every hub, grouped</span>
+/hub-lint</pre>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-weight:480;font-size:1.4rem;margin:40px 0 4px">Underneath: the CLI, the gate, the conventions</h3>
+    <p style="color:var(--muted)">The skills lean on small deterministic scripts and two reference docs you can read or run by hand.</p>
+    <div class="mini">
+      <div><div class="mc">./scripts/hub create &lt;name&gt;</div><div class="md">scaffold a new sub-hub from the template</div></div>
+      <div><div class="mc">./scripts/hub list</div><div class="md">list sub-hubs with note counts</div></div>
+      <div><div class="mc">.claude/hooks/hub-lint.sh &lt;hub&gt;</div><div class="md">the deterministic health gate, exits nonzero on a BLOCK</div></div>
+      <div><div class="mc">.claude/hooks/append-log.sh &lt;hub&gt; &lt;op&gt; &lt;note&gt; &lt;why&gt;</div><div class="md">add one append-only line to the hub log</div></div>
+      <div><div class="mc">docs/note-format.md</div><div class="md">the canonical note shape store-to-hub writes and hub-lint checks</div></div>
+      <div><div class="mc">CONTEXT.md</div><div class="md">glossary: sub-hub vs note vs work, the routing boundary</div></div>
+    </div>
+
+    <div class="start">
+      <h3>Clone it and run your own</h3>
+      <p>This hub is a working starter, not just an idea. Clone it, activate the skills, and the notes you see become your examples. Plain markdown plus a few small scripts. Nothing to host.</p>
+      <ol>
+        <li>Clone into place: <code>git clone &lt;repo&gt; ~/workspace/agent-knowledge-hub</code></li>
+        <li>Activate: <code>cd ~/workspace/agent-knowledge-hub &amp;&amp; ./install.sh</code> links the skills into Claude Code and Codex (restart them after), makes hooks runnable. Optional: <code>fzf</code> enables typo-tolerant retrieval. Skills only? <code>npx skills add &lt;repo&gt; --all</code> works too</li>
+        <li>Start fresh: read the sample notes for the style, clear them, then <code>./scripts/hub create &lt;your-hub&gt;</code> and use <code>/load-context</code>, <code>/store-to-hub</code>, <code>/hub-lint</code></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GROUNDING ============ -->
+<section id="reading">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">06</span>
+      <div>
+        <h2>Grounding</h2>
+        <div class="sub">The sources this design is built on, and what each one contributed. Decisions recorded in <code>docs/adr/</code>.</div>
+      </div>
+    </div>
+    <div class="mini">
+      <div><div class="mc"><a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">Anthropic: Effective context engineering</a></div><div class="md">"smallest set of high-signal tokens"; just-in-time retrieval via lightweight identifiers = the INDEX; structured note-taking outside the context window</div></div>
+      <div><div class="mc"><a href="https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f">Karpathy: LLM wiki</a></div><div class="md">the pattern itself: an LLM-maintained markdown knowledge base with an index, a log, and a lint loop</div></div>
+      <div><div class="mc"><a href="https://www.letta.com/blog/context-repositories">Letta: Context repositories</a></div><div class="md">memory as a versioned filesystem; filenames as navigational signal; the case for git (deferred, ADR 0001)</div></div>
+      <div><div class="mc"><a href="https://www.newsletter.swirlai.com/p/agent-skills-progressive-disclosure">SwirlAI: Progressive disclosure</a></div><div class="md">the three-tier read-ladder: lightweight index, details on demand, source last; context rot is the failure mode</div></div>
+      <div><div class="mc"><a href="https://falconer.com/guides/enterprise-llm-wiki-karpathy/">Falconer: Scaling the LLM wiki</a></div><div class="md">freshness beats search: "better retrieval of stale data returns wrong answers faster"; why hub-lint exists</div></div>
+      <div><div class="mc"><a href="https://fortelabs.com/blog/para/">Forte: PARA</a></div><div class="md">projects vs resources = works vs notes; reusable material gets promoted out of finished projects</div></div>
+      <div><div class="mc"><a href="https://notes.andymatuschak.org/Evergreen_notes_should_be_concept-oriented">Matuschak: Evergreen notes</a></div><div class="md">notes are atomic, concept-oriented, cross-project; drain reusable findings out of project folders</div></div>
+      <div><div class="mc"><a href="https://www.dsebastien.net/2022-05-15-maps-of-content/">Maps of Content</a></div><div class="md">findability: a work links to notes instead of burying them; one home, many links</div></div>
+      <div><div class="mc"><a href="https://github.com/mattpocock/skills">mattpocock/skills</a></div><div class="md">the skill design grammar: tiny frontmatter, embedded templates, linked FORMAT docs, propose-then-act</div></div>
+      <div><div class="mc"><a href="https://platform.claude.com/cookbook/tool-use-context-engineering-context-engineering-tools">Claude Cookbook: Context engineering</a></div><div class="md">memory, compaction, and tool-result clearing mechanics behind the session loop</div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <span>agent-knowledge-hub field guide · <b>~/workspace/agent-knowledge-hub/docs/hub-guide.html</b></span>
+    <span>read → write → maintain · <b>compounds over time</b></span>
+  </div>
+</footer>
+
+</body>
+</html>

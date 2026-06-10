@@ -1,0 +1,11 @@
+{
+  "name": "store-to-hub-skill",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "Classify + file a finding into the right agent-knowledge-hub sub-hub, with dedup and propose-confirm.",
+  "scripts": {
+    "test": "node --test",
+    "eval": "node evals/run.mjs"
+  }
+}

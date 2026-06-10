@@ -1,0 +1,22 @@
+{
+  "description": "Evaluation cases for load-context selection quality, run against the REAL hubs. Each case: a topic a user would type, and the note file(s) that should appear in the top-N results. expectTop=true means it must be the #1 hit. Rewrite these for your own notes as the hub grows.",
+  "topN": 3,
+  "cases": [
+    {
+      "topic": "shared package rebuild lib",
+      "expect": "prebuilt-lib-indirection.md",
+      "expectTop": true
+    },
+    {
+      "topic": "env var token ignored",
+      "expect": "env-var-not-read.md",
+      "expectTop": true
+    },
+    {
+      "topic": "shared package indriection",
+      "expect": "prebuilt-lib-indirection.md",
+      "expectTop": true,
+      "requiresFzf": true
+    }
+  ]
+}

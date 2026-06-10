@@ -1,0 +1,5 @@
+.DS_Store
+node_modules/
+# Licensed fonts (Avantt, ABRIDGE-Display): not redistributable.
+# Cloners: copy from clinician-web/apps/soap-dashboard/public/fonts (see install.sh).
+docs/fonts/
