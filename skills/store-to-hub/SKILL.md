@@ -9,7 +9,7 @@ File a durable finding into the correct `agent-knowledge-hub` sub-hub. Picks the
 
 **Propose-confirm is the skill.** Classification and dedup are mechanical; the one rule that must never break is showing the full diff and waiting. Never write without it.
 
-New notes follow the canonical shape in `~/workspace/agent-knowledge-hub/docs/note-format.md` (TL;DR first, code-grounded body, verified-vs-inferred, sources, related). Read it before authoring.
+New notes follow the canonical shape in `docs/note-format.md` in the hub repo (TL;DR first, code-grounded body, verified-vs-inferred, sources, related). Read it before authoring.
 
 ## Input
 
@@ -24,7 +24,7 @@ If the topic is ambiguous, ask for one short phrase before classifying.
 1. **Classify (deterministic):**
 
    ```bash
-   node ~/.claude/skills/store-to-hub/bin/classify.mjs "<topic>" --json
+   node "${HUB_ROOT:-$HOME/workspace/agent-knowledge-hub}"/skills/store-to-hub/bin/classify.mjs "<topic>" --json
    ```
 
    Returns `candidateHubs` (each sub-hub name + its `AGENTS.md` charter snippet) and `dedupHits` (existing notes whose INDEX summary overlaps the topic, a candidate list, not a verdict).
@@ -38,13 +38,13 @@ If the topic is ambiguous, ask for one short phrase before classifying.
 4. **Propose and confirm (mandatory).** Print the full new-note content or the exact append diff and wait for explicit confirmation. NEVER write without it. Be extra strict on appends: show enough surrounding context that the user can see you are not clobbering or duplicating existing content.
 
 5. **On confirm, write + bookkeep** (in this order):
-   - For a NEW note, gate the content first: `~/workspace/agent-knowledge-hub/.claude/hooks/validate-note.sh <note-path>` must pass (strict: a new em dash is a hard fail). Fix before writing the final file.
+   - For a NEW note, gate the content first: `"${HUB_ROOT:-$HOME/workspace/agent-knowledge-hub}"/.claude/hooks/validate-note.sh <note-path>` must pass (strict: a new em dash is a hard fail). Fix before writing the final file.
    - Write the note (new file) or apply the append.
    - Add or update the note's one-line entry in that hub's `INDEX.md`.
-   - Append a log entry: `~/workspace/agent-knowledge-hub/.claude/hooks/append-log.sh <hub-dir> <op> <note> "<one-line what+why>"` (op = `add` | `update` | `merge` | `delete` | `rename`).
-   - Run the deterministic gate and report it: `~/workspace/agent-knowledge-hub/.claude/hooks/hub-lint.sh <hub-dir>`. A BLOCK finding means you broke INDEX or a link; fix it immediately. WARN findings are fine to leave.
+   - Append a log entry: `"${HUB_ROOT:-$HOME/workspace/agent-knowledge-hub}"/.claude/hooks/append-log.sh <hub-dir> <op> <note> "<one-line what+why>"` (op = `add` | `update` | `merge` | `delete` | `rename`).
+   - Run the deterministic gate and report it: `"${HUB_ROOT:-$HOME/workspace/agent-knowledge-hub}"/.claude/hooks/hub-lint.sh <hub-dir>`. A BLOCK finding means you broke INDEX or a link; fix it immediately. WARN findings are fine to leave.
 
-6. **No hub fits: propose a new sub-hub.** A finding with no home is a signal the hub set should grow, that is the point of the monorepo. Propose: a kebab-case hub name, a one-line scope for its charter, and the command (`~/workspace/agent-knowledge-hub/scripts/hub create <name>`). On confirm, create it, fill in the charter scope, then file the note there (steps 4-5 as normal). If the user prefers an existing hub instead, respect that. Never force a note into a hub whose charter does not claim it.
+6. **No hub fits: propose a new sub-hub.** A finding with no home is a signal the hub set should grow, that is the point of the monorepo. Propose: a kebab-case hub name, a one-line scope for its charter, and the command (`"${HUB_ROOT:-$HOME/workspace/agent-knowledge-hub}"/scripts/hub create <name>`). On confirm, create it, fill in the charter scope, then file the note there (steps 4-5 as normal). If the user prefers an existing hub instead, respect that. Never force a note into a hub whose charter does not claim it.
 
 ## Notes
 

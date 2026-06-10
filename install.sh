@@ -6,8 +6,6 @@
 # hooks executable. Idempotent. Any existing real skill dir is backed up to
 # <name>.pre-install.bak first, so nothing is lost.
 #
-# Note: the skills reference hooks by the absolute path ~/workspace/agent-knowledge-hub.
-# Clone there, or update the paths in skills/*/SKILL.md if you clone elsewhere.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 DEST="$HOME/.claude/skills"
@@ -47,7 +45,7 @@ if [ -d "$HOME/.codex" ]; then
   done
 fi
 
-command -v fzf >/dev/null 2>&1 || echo "note: fzf not found; typo-tolerant retrieval disabled (optional: brew install fzf)"
+command -v fzf >/dev/null 2>&1 || echo "note: fzf not found; fuzzy retrieval fallback disabled (optional: brew install fzf)"
 echo
 echo "Done. Try:  /load-context <topic>   /store-to-hub   /hub-lint"
 echo "The hubs/ here are example notes. Read them for the style, then clear them"

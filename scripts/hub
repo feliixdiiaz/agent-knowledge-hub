@@ -23,10 +23,14 @@ case "$cmd" in
     dest="$HUBS/$name"
     [ -e "$dest" ] && { echo "hub '$name' exists"; exit 1; }
     mkdir -p "$dest"
-    sed "s/{{HUB_NAME}}/$name/g" "$TPL/AGENTS.md" > "$dest/AGENTS.md"
+    sed -e "s/{{HUB_NAME}}/$name/g" \
+        -e "s/{{DOMAIN}}/REPLACE THIS LINE: one sentence on what findings this hub claims, plus tie-breakers vs your other sub-hubs./g" \
+        "$TPL/AGENTS.md" > "$dest/AGENTS.md"
     sed "s/{{HUB_NAME}}/$name/g" "$TPL/INDEX.md" > "$dest/INDEX.md"
     printf '@AGENTS.md\n' > "$dest/CLAUDE.md"
+    printf '# %s log\n\nAppend-only operations log. Format: `- <date> | <op> | <note> | <what+why>`. Newest at bottom.\n' "$name" > "$dest/log.md"
     echo "created hub: hubs/$name"
+    echo "next: 1) edit hubs/$name/AGENTS.md scope line  2) add the hub to the root INDEX.md"
     ;;
   *)
     echo "hub <create <name> | list>"; exit 2 ;;

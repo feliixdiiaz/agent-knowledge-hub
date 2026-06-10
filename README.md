@@ -90,13 +90,13 @@ The loop in one sentence: **prime** pulls the smallest useful slice of past know
 
 ## Get started
 
-Use this template (or clone), then:
+Use this template (or clone, any path works; `install.sh` records the location as `HUB_ROOT`), then:
 
 ```bash
 cd ~/workspace/agent-knowledge-hub && ./install.sh
 ```
 
-`install.sh` symlinks the skills into `~/.claude/skills/` and `~/.codex/skills/` (restart the harness after), makes the hooks runnable, and records `HUB_ROOT`. Optional: `brew install fzf` enables typo-tolerant retrieval.
+`install.sh` symlinks the skills into `~/.claude/skills/` and `~/.codex/skills/` (restart the harness after), makes the hooks runnable, and records `HUB_ROOT`. Optional: `brew install fzf` enables fuzzy retrieval (fzf subsequence matching, presented as "did you mean"; it catches doubled or dropped letters, not arbitrary edits).
 
 The `hubs/example/` sub-hub ships with two sample notes; read them for the format, then clear it and create your own:
 

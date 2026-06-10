@@ -45,7 +45,7 @@ Routing is charter-driven, not hardcoded:
 
 1. Match the finding against each sub-hub's charter (its scope declaration). File it in the hub whose charter claims it.
 2. If two charters could claim it, the charters themselves should declare which wins (each charter carries its own scope test and tie-breakers). Never split one topic across two hubs; one canonical note.
-3. **If no charter fits, do not force it.** Suggest creating a new sub-hub: propose a name and a one-line scope, then `./scripts/hub create <name>`. A finding that has no home is a signal the hub set should grow.
+3. **If no charter fits, do not force it.** Suggest creating a new sub-hub: propose a name and a one-line scope, then `./scripts/hub create <name>`. A finding that has no home is a signal the hub set should grow. After creating a sub-hub, fill its charter's scope line and add it to the root `INDEX.md` (the sub-hub catalog).
 
 `store-to-hub` implements exactly this: classify against charters, route, or propose a new sub-hub.
 

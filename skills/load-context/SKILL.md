@@ -20,7 +20,7 @@ Retrieval is two-stage by design: a deterministic fast path, and a semantic fall
 1. **Fast path** for a crisp topic. Run the matcher (deterministic, cheap, testable):
 
    ```bash
-   node ~/.claude/skills/load-context/bin/match.mjs "<topic>" --json
+   node "${HUB_ROOT:-$HOME/workspace/agent-knowledge-hub}"/skills/load-context/bin/match.mjs "<topic>" --json
    ```
 
    It scans each hub's `INDEX.md`, scores entries by exact query-term hits, and returns the top matches with `summary`, `tldr`, and the full-note `path`. When exact matching finds nothing, it automatically falls back to **fzf** (`fzf --filter`, optional dependency; skipped silently if not installed) over the INDEX lines, and marks those results `matchType: "fuzzy"`. Present fuzzy results as "did you mean", not as confident hits.
@@ -41,7 +41,7 @@ Defaults to every sub-hub under `$HUB_ROOT/hubs/` (`~/workspace/agent-knowledge-
 
 ## Optional, on top of the hub
 
-- The hub is the curated layer; claude-mem is the passive episodic layer (see `~/workspace/agent-knowledge-hub/docs/adr/0002-claude-mem-boundary-and-session-lifecycle.md`). For a richer prime, you may also consult claude-mem `mem-search` ("did we solve this before?") and `tail` the active hub's `log.md` for recent activity. These are optional context, not part of the deterministic match.
+- The hub is the curated layer; claude-mem is the passive episodic layer (see `docs/adr/0002-claude-mem-boundary-and-session-lifecycle.md` in the hub repo). For a richer prime, you may also consult claude-mem `mem-search` ("did we solve this before?") and `tail` the active hub's `log.md` for recent activity. These are optional context, not part of the deterministic match.
 
 ## Notes
 
