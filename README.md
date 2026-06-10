@@ -8,6 +8,26 @@ Open `docs/hub-guide.html` for the full why/how/workflow.
 
 ## How it works
 
+At a glance:
+
+```mermaid
+flowchart LR
+    classDef store fill:#f7f2ed,stroke:#a7988a,color:#141312
+    classDef act fill:#fff,stroke:#ea2c00,color:#141312
+    classDef gate fill:#fff,stroke:#02745f,color:#141312
+
+    A["your coding agent"]:::act
+    H[("the hub<br/>notes + works,<br/>indexed per sub-hub")]:::store
+    MNT["weekly sweep + /hub-lint"]:::gate
+
+    A -- "prime: /load-context" --> H
+    H -- "index line, then TL;DR,<br/>then body on demand" --> A
+    A -- "capture: /store-to-hub<br/>(propose, confirm, write)" --> H
+    MNT -. "maintain: keeps it<br/>trustworthy" .-> H
+```
+
+In detail:
+
 ```mermaid
 flowchart TB
     classDef store fill:#f7f2ed,stroke:#a7988a,color:#141312
