@@ -129,6 +129,23 @@ docs/            note-format.md, hub-guide.html, adr/ (design rationale)
 4. Retrieval is a ladder: INDEX one-liners, then TL;DRs, then full bodies, never a bulk dump. Exact match first, `fzf` fuzzy fallback, agent judgment last.
 5. **Maintenance is scheduled, not remembered**: `scripts/hub-maintenance.sh` (weekly via launchd/cron) lints every hub, snapshots to git, checks citation drift, and notifies only on regressions.
 
+## Make your agents aware of it
+
+Inside the repo, every AGENTS.md-reading agent picks the contract up automatically. For the hub to be available **all the time, from any working directory**, add a short pointer to each agent's global instructions (Claude Code's `~/.claude/CLAUDE.md`, Codex's `~/.codex/AGENTS.md`, Cursor's user rules, etc.):
+
+```text
+## Knowledge hub
+~/workspace/agent-knowledge-hub is my curated knowledge monorepo (sub-hubs under hubs/).
+- Prime: before starting topic work, search it:
+  node "$HUB_ROOT"/skills/load-context/bin/match.mjs "<topic>" --json
+- Capture: after a substantive investigation (30+ min, reusable, non-obvious), propose a note
+  following its docs/note-format.md; show the full note and wait for my confirmation before
+  writing; then update the sub-hub INDEX.md and log via .claude/hooks/append-log.sh.
+- Never store sensitive data or credentials: cite the pointer, never the payload.
+```
+
+That snippet plus the CLIs is the whole integration; no server, no protocol. (If you ever need the hub from an agent **without shell access**, or want machine-enforced write gating, see ADR 0005 for the deferred MCP design.)
+
 ## Maintenance
 
 Wire `scripts/hub-maintenance.sh` into launchd/cron weekly. It runs the deterministic gate over every sub-hub, auto-commits a git snapshot, and reports citation drift (notes citing code that changed or vanished upstream in your local clones). The LLM pass (`/hub-lint`) stays on demand.
