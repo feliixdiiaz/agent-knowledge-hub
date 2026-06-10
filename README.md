@@ -4,7 +4,7 @@ A template for a personal, agent-maintained knowledge monorepo: dense, code-grou
 
 Three skills drive it: read (`/load-context`), write (`/store-to-hub`), maintain (`/hub-lint`). Works with **Claude Code, Codex, and Cursor** (`AGENTS.md` is the shared contract; the skills install into Claude Code and Codex, and every operation underneath is a plain CLI any agent can run).
 
-Open `docs/hub-guide.html` for the full why/how/workflow.
+Read the **[field guide](https://eyupcanbodur.github.io/agent-knowledge-hub/hub-guide.html)** for the full why/how/workflow (also at `docs/hub-guide.html` locally).
 
 ## How it works
 
