@@ -11,6 +11,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: install fzf (exercises the fuzzy-fallback code paths)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq fzf
       - name: doctor on a clean checkout
         run: HUB_ROOT="$GITHUB_WORKSPACE" scripts/checks/doctor.sh
       - name: deterministic check suite
