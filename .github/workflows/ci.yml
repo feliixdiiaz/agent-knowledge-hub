@@ -1,0 +1,25 @@
+name: ci
+on:
+  push:
+    branches: [master]
+  pull_request:
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: deterministic check suite
+        run: bash scripts/checks/test-hooks.sh
+      - name: lint the example hub
+        run: scripts/checks/hub-lint.sh hubs/example
+      - name: load-context tests
+        run: cd skills/load-context && node --test
+      - name: store-to-hub tests
+        run: cd skills/store-to-hub && node --test
+      - name: retrieval eval vs example hub
+        run: cd skills/load-context && HUB_ROOT="$GITHUB_WORKSPACE" node evals/run.mjs
+      - name: dedup eval vs example hub
+        run: cd skills/store-to-hub && STORE_TO_HUB_ROOT="$GITHUB_WORKSPACE/hubs" node evals/run.mjs

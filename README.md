@@ -1,14 +1,15 @@
 # agent-knowledge-hub
 
-A template for a personal, agent-maintained knowledge monorepo: dense, code-grounded notes that your coding agents read to prime on a topic and write to capture durable findings, so investigations compound instead of evaporating when the session ends.
+**Your coding agent forgets everything. Every investigation evaporates at session end, and next week it re-derives it all. This template fixes that.**
 
-Three skills drive it: read (`/load-context`), write (`/store-to-hub`), maintain (`/hub-lint`). **Agent-agnostic by design**: the contract is `AGENTS.md` (the open standard read natively by Claude Code, Codex, Cursor, Copilot, Gemini CLI, Aider, and most coding agents), and every operation underneath is a plain CLI any agent can run. The slash-command packaging installs into Claude Code and Codex out of the box; the [skills CLI](https://github.com/vercel-labs/skills) distributes it to the rest.
+[![ci](https://github.com/eyupcanbodur/agent-knowledge-hub/actions/workflows/ci.yml/badge.svg)](https://github.com/eyupcanbodur/agent-knowledge-hub/actions/workflows/ci.yml)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![field guide](https://img.shields.io/badge/field%20guide-live-ea2c00)](https://eyupcanbodur.github.io/agent-knowledge-hub/hub-guide.html)
+[![use this template](https://img.shields.io/badge/use%20this-template-success)](https://github.com/eyupcanbodur/agent-knowledge-hub/generate)
 
-Read the **[field guide](https://eyupcanbodur.github.io/agent-knowledge-hub/hub-guide.html)** for the full why/how/workflow (also at `docs/hub-guide.html` locally).
+A personal knowledge monorepo your coding agents **read** before working, **write** after investigating, and **maintain** on a schedule, so findings compound instead of evaporating. Plain markdown, small deterministic scripts, no server, no database, no embeddings.
 
-## How it works
-
-At a glance:
+**Agent-agnostic by design:** the contract is `AGENTS.md` (read natively by Claude Code, Codex, Cursor, Copilot, Gemini CLI, Aider, and most coding agents), and every operation is a plain CLI any agent can run. Slash-command packaging ships for Claude Code and Codex; the [skills CLI](https://github.com/vercel-labs/skills) distributes it to the rest.
 
 ```mermaid
 flowchart LR
@@ -26,7 +27,53 @@ flowchart LR
     MNT -. "maintain: keeps it<br/>trustworthy" .-> H
 ```
 
-In detail:
+## The three skills
+
+The entire workflow is three commands. Each is a thin prompt over a deterministic, tested CLI, so the behavior is inspectable and identical on every platform.
+
+| Skill | What it does | The guarantee |
+|---|---|---|
+| **`/load-context <topic>`** | Primes the agent: matches the topic against every sub-hub's INDEX, returns the top notes with their TL;DRs, dives into full bodies only on demand. Falls back to `fzf` fuzzy matching ("did you mean") when exact matching finds nothing; with no topic, shows the whole catalog. | Retrieval costs one INDEX read, never a context dump. Selection quality is regression-tested by an eval. |
+| **`/store-to-hub`** | Captures a finding: classifies it against every sub-hub's charter, dedupes against existing notes, then **shows the full note or diff and waits for confirmation** before writing. Confirmed writes are followed by INDEX update, log entry, and a lint pass, automatically. No charter fits? It proposes creating a new sub-hub instead of forcing a bad fit. | Nothing is written without a previewed, validated payload. The write gate hard-rejects secret-shaped strings. |
+| **`/hub-lint [hub]`** | Maintains: runs the deterministic gate (orphans, broken links, missing INDEX or log entries, secrets, stale hubs, stalled works), then an LLM pass for what scripts cannot see: contradictions between notes, duplicate topics, stale claims. | Proposes fixes, never applies them. The deterministic half also runs weekly without you. |
+
+Underneath, harness-agnostic CLIs any agent (or you) can call directly:
+
+```bash
+node skills/load-context/bin/match.mjs "<topic>" --json     # retrieve
+node skills/store-to-hub/bin/classify.mjs "<topic>" --json  # classify + dedup
+scripts/checks/hub-lint.sh hubs/<name>                      # health gate
+scripts/checks/append-log.sh <hub> <op> <note> "<why>"      # log a write
+```
+
+## Quickstart
+
+```bash
+# 1. Use this template on GitHub (or clone; any path works)
+git clone https://github.com/eyupcanbodur/agent-knowledge-hub.git ~/workspace/agent-knowledge-hub
+
+# 2. Install: links the skills into Claude Code + Codex, records HUB_ROOT
+cd ~/workspace/agent-knowledge-hub && ./install.sh
+
+# 3. Restart your agent, read hubs/example/ for the note style, then start your own
+./scripts/hub create <your-domain>
+```
+
+About two minutes. Optional: `brew install fzf` enables fuzzy retrieval (subsequence matching, surfaced as "did you mean"; it catches doubled or dropped letters, not arbitrary edits).
+
+## Receipts, not claims
+
+From the original instance this system was built in:
+
+- **A real contradiction, caught.** Two notes disagreed about the same fix (one recommended a command, the other proved it harmful). The lint pass surfaced it; the notes were merged into one canonical answer.
+- **3 dead citations, found automatically.** The weekly citation-drift check compared notes against upstream code and flagged three notes citing files that had moved or been deleted. Confidently-stale knowledge is the worst kind; now it surfaces on a schedule.
+- **Retrieval is tested.** A regression-gated eval runs the matcher against the real hubs (exact and fuzzy cases, 100%). It once caught an INDEX entry polluting selection.
+- **Adopted by a stranger, from docs alone.** A zero-context agent was pointed at this README and completed the full loop (install, new hub, note, retrieve, lint) unaided. Its five friction findings were fixed at the generator, and that gate is now in [CONTRIBUTING](CONTRIBUTING.md).
+
+## How it works, in detail
+
+<details>
+<summary>Full flow: prime / capture / maintain around the hub (diagram)</summary>
 
 ```mermaid
 flowchart TB
@@ -86,27 +133,17 @@ flowchart TB
     LLM -.judges.-> N
 ```
 
+</details>
+
 The loop in one sentence: **prime** pulls the smallest useful slice of past knowledge (index line, then TL;DR, then body), **capture** routes a new finding to whichever sub-hub charter claims it (or grows a new one) behind a propose-confirm gate, and **maintain** runs deterministic hygiene on a schedule so the knowledge stays trustworthy without anyone remembering to check.
 
-## Get started
+The model in five lines:
 
-Use this template (or clone, any path works; `install.sh` records the location as `HUB_ROOT`), then:
-
-```bash
-cd ~/workspace/agent-knowledge-hub && ./install.sh
-```
-
-`install.sh` symlinks the skills into `~/.claude/skills/` and `~/.codex/skills/` (restart the harness after), makes the hooks runnable, and records `HUB_ROOT`. Optional: `brew install fzf` enables fuzzy retrieval (fzf subsequence matching, presented as "did you mean"; it catches doubled or dropped letters, not arbitrary edits).
-
-The `hubs/example/` sub-hub ships with two sample notes; read them for the format, then clear it and create your own:
-
-```bash
-./scripts/hub create <your-hub>
-```
-
-Then edit `hubs/<your-hub>/AGENTS.md`: one line of scope (what findings this hub claims) is enough to start.
-
-Skills-only install (no clone): `npx skills add <your-fork> --all` distributes them to every supported harness via the [skills CLI](https://github.com/vercel-labs/skills).
+1. A **note** is atomic, cross-project, and findable: one INDEX line + a `## TL;DR` + a code-cited body ([docs/note-format.md](docs/note-format.md)).
+2. A **work** is a goal-bound project folder; reusable findings get **promoted** to notes.
+3. **Routing is charter-driven**: each sub-hub's `AGENTS.md` declares its scope; no fit means create a new sub-hub.
+4. Retrieval is a ladder: INDEX one-liners, then TL;DRs, then full bodies, never a bulk dump.
+5. **Maintenance is scheduled, not remembered.**
 
 ## Layout
 
@@ -134,31 +171,22 @@ agent-knowledge-hub/
 ├── scripts/
 │   ├── hub              CLI: create <name> (scaffold a sub-hub), list
 │   ├── hub-maintenance.sh   the weekly sweep: lint all hubs, git snapshot, notify on regressions
-│   └── citation-drift.sh    do notes cite code that changed or vanished upstream?
-│
-├── scripts/checks/       small deterministic checks the skills and sweep call
-│   ├── validate-note.sh     write gate: secrets and format (hard fail)
-│   ├── check-index-updated.sh  every note has an INDEX entry
-│   ├── append-log.sh        one consistent log line per write
-│   ├── hub-lint.sh          the full gate: orphans, links, staleness (exit 1 on BLOCK)
-│   └── test-hooks.sh        tests for all of the above
+│   ├── citation-drift.sh    do notes cite code that changed or vanished upstream?
+│   └── checks/          deterministic gates any agent can run
+│       ├── validate-note.sh        write gate: secrets and format (hard fail)
+│       ├── check-index-updated.sh  every note has an INDEX entry
+│       ├── append-log.sh           one consistent log line per write
+│       ├── hub-lint.sh             the full gate (exit 1 on BLOCK)
+│       └── test-hooks.sh           tests for all of the above
 │
 ├── template/            starter files `scripts/hub create` copies for a new sub-hub
 └── docs/
     ├── note-format.md   the canonical note shape (what store-to-hub writes, lint checks)
-    ├── hub-guide.html   the field guide (also live on GitHub Pages)
+    ├── hub-guide.html   the field guide (live on GitHub Pages)
     └── adr/             design rationale with sources; read 0001 first
 ```
 
 Rule of thumb: `hubs/` is yours, everything else is machinery you rarely touch.
-
-## The model in five lines
-
-1. A **note** is atomic, cross-project, and findable: one INDEX line + a `## TL;DR` + a code-cited body (`docs/note-format.md`).
-2. A **work** is a goal-bound project folder; reusable findings get **promoted** to notes.
-3. **Routing is charter-driven**: each sub-hub's `AGENTS.md` declares its scope; no fit means create a new sub-hub.
-4. Retrieval is a ladder: INDEX one-liners, then TL;DRs, then full bodies, never a bulk dump. Exact match first, `fzf` fuzzy fallback, agent judgment last.
-5. **Maintenance is scheduled, not remembered**: `scripts/hub-maintenance.sh` (weekly via launchd/cron) lints every hub, snapshots to git, checks citation drift, and notifies only on regressions.
 
 ## Make your agents aware of it
 
@@ -175,12 +203,26 @@ Inside the repo, every AGENTS.md-reading agent picks the contract up automatical
 - Never store sensitive data or credentials: cite the pointer, never the payload.
 ```
 
-That snippet plus the CLIs is the whole integration; no server, no protocol. (If you ever need the hub from an agent **without shell access**, or want machine-enforced write gating, see ADR 0005 for the deferred MCP design.)
+That snippet plus the CLIs is the whole integration; no server, no protocol. (For agents **without shell access**, or machine-enforced write gating, see [ADR 0005](docs/adr/0005-skills-not-mcp.md) for the deferred MCP design.)
+
+## Why not just...
+
+- **...RAG / embeddings?** Retrieval quality is not the bottleneck; knowledge rot is. A vector index over stale notes returns confidently wrong answers faster. Here the index is human-curated one-liners (cheap, inspectable) and the maintenance loop attacks staleness directly.
+- **...a memory plugin?** Passive session memory is a great safety net and pairs well with this (see [ADR 0002](docs/adr/0002-claude-mem-boundary-and-session-lifecycle.md)). But machine-summarized episodic memory is unverified and keeps the dead ends. The hub is the curated layer: human-confirmed, code-cited, shareable.
+- **...a notes app?** Notes apps optimize for humans writing. This optimizes for agents reading (progressive disclosure, deterministic retrieval, charter routing) and agents writing safely (propose-confirm, validation gates, logging). It is plain markdown, so it stays perfectly readable by you.
 
 ## Maintenance
 
-Wire `scripts/hub-maintenance.sh` into launchd/cron weekly. It runs the deterministic gate over every sub-hub, auto-commits a git snapshot, and reports citation drift (notes citing code that changed or vanished upstream in your local clones). The LLM pass (`/hub-lint`) stays on demand.
+Wire `scripts/hub-maintenance.sh` into launchd/cron weekly: it lints every sub-hub, snapshots changes to git, checks citation drift against your local clones, and notifies only on regressions. The LLM pass (`/hub-lint`) stays on demand. See [ADR 0004](docs/adr/0004-maintenance-loop.md).
 
 ## Design rationale
 
-`docs/adr/` records why the system is shaped this way (no frontmatter, INDEX as the retrieval surface, log + git, charter-driven routing, the maintenance loop), with sources (Karpathy's LLM-wiki, Anthropic's context-engineering guidance, PARA/evergreen notes, Letta's context repositories). Read `0001` first.
+[`docs/adr/`](docs/adr/) records why the system is shaped this way (no frontmatter, INDEX as the retrieval surface, log + git, charter-driven routing, the maintenance loop, skills over MCP), with sources: Karpathy's LLM-wiki, Anthropic's context-engineering guidance, PARA, evergreen notes, Letta's context repositories. Read [0001](docs/adr/0001-hub-knowledge-management.md) first.
+
+## Contributing
+
+One hard rule: the **fresh-agent gate**. Anything that affects how a new user adopts this must survive a zero-context agent following the docs alone. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## License
+
+[MIT](LICENSE)
