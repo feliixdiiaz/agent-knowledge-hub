@@ -208,7 +208,7 @@ That snippet plus the CLIs is the whole integration; no server, no protocol. (Fo
 ## Why not just...
 
 - **...RAG / embeddings?** Retrieval quality is not the bottleneck; knowledge rot is. A vector index over stale notes returns confidently wrong answers faster. Here the index is human-curated one-liners (cheap, inspectable) and the maintenance loop attacks staleness directly.
-- **...a memory plugin?** Passive session memory is a great safety net and pairs well with this (see [ADR 0002](docs/adr/0002-claude-mem-boundary-and-session-lifecycle.md)). But machine-summarized episodic memory is unverified and keeps the dead ends. The hub is the curated layer: human-confirmed, code-cited, shareable.
+- **...a memory plugin?** Passive session memory is a great safety net and pairs well with this; the hub shines next to one, because it can stay selective while the passive layer backstops everything below the filing bar (see [ADR 0002](docs/adr/0002-claude-mem-boundary-and-session-lifecycle.md)). On Claude Code, [claude-mem](https://github.com/thedotmack/claude-mem) is a good companion; other harnesses have their own session-history equivalents. But machine-summarized episodic memory is unverified and keeps the dead ends. The hub is the curated layer: human-confirmed, code-cited, shareable. No passive layer at all? Everything still works; your filing bar just drops.
 - **...a notes app?** Notes apps optimize for humans writing. This optimizes for agents reading (progressive disclosure, deterministic retrieval, charter routing) and agents writing safely (propose-confirm, validation gates, logging). It is plain markdown, so it stays perfectly readable by you.
 
 ## Maintenance
