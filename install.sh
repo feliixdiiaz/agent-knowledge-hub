@@ -11,7 +11,7 @@ ROOT="$(cd "$(dirname "$0")" && pwd)"
 DEST="$HOME/.claude/skills"
 mkdir -p "$DEST"
 
-for s in load-context store-to-hub hub-lint; do
+for s in load-context store-to-hub hub-lint hub-doctor; do
   target="$DEST/$s"
   if [ -L "$target" ]; then
     rm -f "$target"
@@ -35,7 +35,7 @@ fi
 # Codex: same skills, same source of truth (Codex reads ~/.codex/skills natively)
 if [ -d "$HOME/.codex" ]; then
   mkdir -p "$HOME/.codex/skills"
-  for s in load-context store-to-hub hub-lint; do
+  for s in load-context store-to-hub hub-lint hub-doctor; do
     target="$HOME/.codex/skills/$s"
     if [ -L "$target" ]; then rm -f "$target"
     elif [ -e "$target" ]; then mv "$target" "$target.pre-install.bak"; echo "backed up existing codex $s"

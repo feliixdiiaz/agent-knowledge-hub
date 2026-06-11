@@ -72,5 +72,8 @@ out=$("$H/hub-lint.sh" "$hb"); rc=$?
 [ "$rc" -eq 0 ] || fail "no TL;DR should be WARN not BLOCK"
 echo "$out" | grep -q 'no ## TL;DR: a.md' || fail "no-TLDR not reported"
 
+# doctor: healthy repo reports no FAILs (warns allowed)
+"$H/doctor.sh" >/dev/null 2>&1 || fail "doctor reported FAIL on a healthy repo"
+
 rm -rf "$tmp"
 echo "ALL HOOK TESTS PASS"

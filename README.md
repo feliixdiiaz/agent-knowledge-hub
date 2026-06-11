@@ -37,6 +37,8 @@ The entire workflow is three commands. Each is a thin prompt over a deterministi
 | **`/store-to-hub`** | Captures a finding: classifies it against every sub-hub's charter, dedupes against existing notes, then **shows the full note or diff and waits for confirmation** before writing. Confirmed writes are followed by INDEX update, log entry, and a lint pass, automatically. No charter fits? It proposes creating a new sub-hub instead of forcing a bad fit. | Nothing is written without a previewed, validated payload. The write gate hard-rejects secret-shaped strings. |
 | **`/hub-lint [hub]`** | Maintains: runs the deterministic gate (orphans, broken links, missing INDEX or log entries, secrets, stale hubs, stalled works), then an LLM pass for what scripts cannot see: contradictions between notes, duplicate topics, stale claims. | Proposes fixes, never applies them. The deterministic half also runs weekly without you. |
 
+Plus a meta-skill: **`/hub-doctor`** diagnoses the installation itself (stale `HUB_ROOT` env, hijacked symlinks, broken matcher resolution) deterministically, then fixes safe issues or proposes exact commands. Run it whenever the hub behaves strangely, or after any install or machine migration.
+
 Underneath, harness-agnostic CLIs any agent (or you) can call directly:
 
 ```bash
@@ -166,7 +168,8 @@ agent-knowledge-hub/
 ├── skills/              the three workflows, symlinked into your agents by install.sh
 │   ├── load-context/    read: INDEX match -> fzf fuzzy -> TL;DR -> body (bin/ tests/ evals/)
 │   ├── store-to-hub/    write: classify vs charters, dedup, propose-confirm (bin/ tests/ evals/)
-│   └── hub-lint/        maintain: deterministic gate + LLM pass for contradictions
+│   ├── hub-lint/        maintain: deterministic gate + LLM pass for contradictions
+│   └── hub-doctor/      meta: diagnose and repair the installation itself
 │
 ├── scripts/
 │   ├── hub              CLI: create <name> (scaffold a sub-hub), list
@@ -177,6 +180,7 @@ agent-knowledge-hub/
 │       ├── check-index-updated.sh  every note has an INDEX entry
 │       ├── append-log.sh           one consistent log line per write
 │       ├── hub-lint.sh             the full gate (exit 1 on BLOCK)
+│       ├── doctor.sh               diagnose env/symlinks/matcher resolution
 │       └── test-hooks.sh           tests for all of the above
 │
 ├── template/            starter files `scripts/hub create` copies for a new sub-hub
