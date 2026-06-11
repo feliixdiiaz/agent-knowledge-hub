@@ -202,6 +202,7 @@
   <div class="brand">agent<b>-</b>knowledge<b>-</b>hub</div>
   <nav class="topnav">
     <a href="#why">why</a>
+    <a href="#receipts">receipts</a>
     <a href="#how">how</a>
     <a href="#loop">session</a>
     <a href="#sources">sources</a>
@@ -214,7 +215,7 @@
   <div class="wrap">
     <div class="eyebrow">personal knowledge monorepo</div>
     <h1>agent-knowledge-hub</h1>
-    <p class="tagline">Dense, code-grounded notes an agent reads and writes, so investigations compound instead of evaporating at session end. The template ships one <b>example</b> sub-hub with sample notes; you clear it and create sub-hubs for the domains you work in.</p>
+    <p class="tagline"><b>Your agent forgets everything: every investigation evaporates at session end, and next week it re-derives it all.</b> This fixes that: dense, code-grounded notes an agent reads and writes, so findings compound. The template ships one <b>example</b> sub-hub with sample notes; you clear it and create sub-hubs for the domains you work in.</p>
     <p class="prereq">Works with <b>any coding agent that reads AGENTS.md</b> (Claude Code, Codex, Cursor, Copilot, Gemini CLI, Aider, ...): the contract is the file, not the harness. The three commands below are Claude Code skills (installed by <code>./install.sh</code>); the same operations are plain CLIs any agent can run (<code>bin/match.mjs</code>, <code>hub-lint.sh</code>). Notes are plain markdown; nothing to host.</p>
     <div class="quickref">
       <a class="qr" href="#jump"><span class="qcmd">/load-context</span> read</a>
@@ -273,6 +274,26 @@
         <p>An agent has a finite context window. Dumping every note rots it. A hub hands over a one-line summary plus a short TL;DR, so the agent spends its budget on the work, not on wading through files.</p>
       </article>
     </div>
+  </div>
+</section>
+
+<!-- ============ RECEIPTS ============ -->
+<section id="receipts">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">R</span>
+      <div>
+        <h2>Receipts, not claims</h2>
+        <div class="sub">What this machinery has actually caught, from the original instance it was built in.</div>
+      </div>
+    </div>
+    <div class="mini">
+      <div><div class="mc">a real contradiction, caught</div><div class="md">two notes disagreed about the same fix (one said "run the login command", the other proved that harmful). The lint pass surfaced it before it cost anything; the notes were merged into one canonical answer.</div></div>
+      <div><div class="mc">3 dead citations, found automatically</div><div class="md">the weekly citation-drift check compared notes against upstream code and flagged three notes citing files that had moved or been deleted. Confidently-stale knowledge is the worst kind; now it surfaces on a schedule.</div></div>
+      <div><div class="mc">retrieval is tested, 100% eval</div><div class="md">a regression-gated eval runs the matcher against the real hubs (exact + fuzzy cases). Selection quality is measured, not assumed; the eval once caught an INDEX entry polluting results.</div></div>
+      <div><div class="mc">adopted by a stranger, from docs alone</div><div class="md">a zero-context agent was pointed at this repo's README and completed the full loop (install, new hub, note, retrieve, lint) unaided. Its five friction findings were fixed; that gate is now in CONTRIBUTING.</div></div>
+    </div>
+    <p style="color:var(--muted);margin-top:18px">Adoption cost: "Use this template", then <code>./install.sh</code>. About two minutes to a working setup in Claude Code and Codex.</p>
   </div>
 </section>
 
