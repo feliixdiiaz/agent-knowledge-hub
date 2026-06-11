@@ -18,6 +18,6 @@ When the gate finds a bug, fix the generator or the doc, never just the instance
 
 ## Everything else
 
-- Deterministic checks over LLM judgment wherever a script can do the job; tests live next to what they test (`skills/*/tests`, `.claude/hooks/test-hooks.sh`).
+- Deterministic checks over LLM judgment wherever a script can do the job; tests live next to what they test (`skills/*/tests`, `scripts/checks/test-hooks.sh`).
 - Design changes that are hard to reverse, surprising without context, and a real trade-off get an ADR in `docs/adr/`.
 - Note conventions live in `docs/note-format.md`; vocabulary in `CONTEXT.md`. Keep both authoritative; do not duplicate them in prose.

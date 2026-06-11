@@ -18,7 +18,7 @@ A sub-hub name: `/hub-lint <sub-hub>`. No arg means lint every sub-hub under `~/
 1. **Deterministic gate first (the CI pass, no judgment):**
 
    ```bash
-   "${HUB_ROOT:-$HOME/workspace/agent-knowledge-hub}"/.claude/hooks/hub-lint.sh ~/workspace/agent-knowledge-hub/hubs/<hub>
+   "${HUB_ROOT:-$HOME/workspace/agent-knowledge-hub}"/scripts/checks/hub-lint.sh ~/workspace/agent-knowledge-hub/hubs/<hub>
    ```
 
    It reports BLOCK (note not in INDEX, INDEX entry with no file, broken relative link) and WARN (em dash, missing log entry, missing `## TL;DR`), exiting nonzero only on BLOCK. Relay its output. Do not re-derive these by hand; the script is the source of truth for them.

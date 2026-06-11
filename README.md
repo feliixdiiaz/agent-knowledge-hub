@@ -136,7 +136,7 @@ agent-knowledge-hub/
 │   ├── hub-maintenance.sh   the weekly sweep: lint all hubs, git snapshot, notify on regressions
 │   └── citation-drift.sh    do notes cite code that changed or vanished upstream?
 │
-├── .claude/hooks/       small deterministic checks the skills and sweep call
+├── scripts/checks/       small deterministic checks the skills and sweep call
 │   ├── validate-note.sh     write gate: secrets and format (hard fail)
 │   ├── check-index-updated.sh  every note has an INDEX entry
 │   ├── append-log.sh        one consistent log line per write
@@ -171,7 +171,7 @@ Inside the repo, every AGENTS.md-reading agent picks the contract up automatical
   node "$HUB_ROOT"/skills/load-context/bin/match.mjs "<topic>" --json
 - Capture: after a substantive investigation (30+ min, reusable, non-obvious), propose a note
   following its docs/note-format.md; show the full note and wait for my confirmation before
-  writing; then update the sub-hub INDEX.md and log via .claude/hooks/append-log.sh.
+  writing; then update the sub-hub INDEX.md and log via scripts/checks/append-log.sh.
 - Never store sensitive data or credentials: cite the pointer, never the payload.
 ```
 

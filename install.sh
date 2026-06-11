@@ -23,7 +23,7 @@ for s in load-context store-to-hub hub-lint; do
   echo "linked skill: $s"
 done
 
-chmod +x "$ROOT"/.claude/hooks/*.sh "$ROOT"/scripts/hub 2>/dev/null || true
+chmod +x "$ROOT"/scripts/checks/*.sh "$ROOT"/scripts/hub 2>/dev/null || true
 echo "hooks + CLI executable"
 
 # Record the hub root so skills resolve paths portably (matchers read $HUB_ROOT).

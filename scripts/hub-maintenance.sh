@@ -21,7 +21,7 @@ warns=0
   echo
   for hub in "$ROOT"/hubs/*/; do
     [ -d "$hub" ] || continue
-    out=$("$ROOT/.claude/hooks/hub-lint.sh" "$hub" 2>&1)
+    out=$("$ROOT/scripts/checks/hub-lint.sh" "$hub" 2>&1)
     rc=$?
     echo "$out"
     echo

@@ -316,7 +316,7 @@
 ├─ install.sh  <span class="c">links skills into your agents, records HUB_ROOT</span>
 ├─ skills/  <span class="c">the three workflows: load-context (read) · store-to-hub (write) · hub-lint (maintain)</span>
 ├─ scripts/  <span class="c">hub CLI (create/list) · weekly maintenance sweep · citation-drift check</span>
-├─ .claude/hooks/  <span class="c">deterministic gates: validate-note, check-index, append-log, hub-lint</span>
+├─ scripts/checks/  <span class="c">deterministic gates: validate-note, check-index, append-log, hub-lint</span>
 ├─ template/ · docs/  <span class="c">new-hub scaffold · note-format, this guide, ADRs</span>
 └─ hubs/  <span class="c">YOUR knowledge lives here; everything above is machinery</span>
    ├─ <span class="eng">example/</span>  <span class="c">ships with the template; replace with your own</span>
@@ -601,8 +601,8 @@ live in firestore accounts collection"</pre>
     <div class="mini">
       <div><div class="mc">./scripts/hub create &lt;name&gt;</div><div class="md">scaffold a new sub-hub from the template</div></div>
       <div><div class="mc">./scripts/hub list</div><div class="md">list sub-hubs with note counts</div></div>
-      <div><div class="mc">.claude/hooks/hub-lint.sh &lt;hub&gt;</div><div class="md">the deterministic health gate, exits nonzero on a BLOCK</div></div>
-      <div><div class="mc">.claude/hooks/append-log.sh &lt;hub&gt; &lt;op&gt; &lt;note&gt; &lt;why&gt;</div><div class="md">add one append-only line to the hub log</div></div>
+      <div><div class="mc">scripts/checks/hub-lint.sh &lt;hub&gt;</div><div class="md">the deterministic health gate, exits nonzero on a BLOCK</div></div>
+      <div><div class="mc">scripts/checks/append-log.sh &lt;hub&gt; &lt;op&gt; &lt;note&gt; &lt;why&gt;</div><div class="md">add one append-only line to the hub log</div></div>
       <div><div class="mc">docs/note-format.md</div><div class="md">the canonical note shape store-to-hub writes and hub-lint checks</div></div>
       <div><div class="mc">CONTEXT.md</div><div class="md">glossary: sub-hub vs note vs work, the routing boundary</div></div>
     </div>

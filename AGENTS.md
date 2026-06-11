@@ -33,7 +33,7 @@ If asked to run something across all hubs (e.g. "lint all hubs"), run sequential
 
 1. Read the hub's `AGENTS.md` first. It has the domain context, note voice, and rules for that specific hub.
 2. Read the hub's `INDEX.md` to find existing notes before creating a new one.
-3. The umbrella owns shared machinery: `template/` (new-hub starter), `scripts/hub` (CLI), `.claude/hooks/` (bookkeeping checks). Hubs inherit these; they do not duplicate them.
+3. The umbrella owns shared machinery: `template/` (new-hub starter), `scripts/hub` (CLI), `scripts/checks/` (bookkeeping checks). Hubs inherit these; they do not duplicate them.
 
 ## Sub-hubs
 
@@ -91,8 +91,8 @@ This file (`AGENTS.md`) is the contract, and it is the open standard most coding
 ```bash
 node skills/load-context/bin/match.mjs "<topic>" --json    # retrieve
 node skills/store-to-hub/bin/classify.mjs "<topic>" --json # classify + dedup
-.claude/hooks/hub-lint.sh hubs/<name>                       # health gate
-.claude/hooks/append-log.sh <hub> <op> <note> "<why>"       # log a write
+scripts/checks/hub-lint.sh hubs/<name>                       # health gate
+scripts/checks/append-log.sh <hub> <op> <note> "<why>"       # log a write
 ```
 
 Skills resolve the hub root from the `HUB_ROOT` env var (written by `install.sh`).
