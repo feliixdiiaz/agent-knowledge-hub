@@ -110,16 +110,47 @@ Skills-only install (no clone): `npx skills add <your-fork> --all` distributes t
 
 ## Layout
 
+```text
+agent-knowledge-hub/
+├── AGENTS.md            the umbrella charter: hub isolation, routing, session loop
+│                        (CLAUDE.md just redirects here; most agents read AGENTS.md natively)
+├── CONTEXT.md           the glossary: one canonical word per concept (note, work, routing, ...)
+├── INDEX.md             catalog of sub-hubs (each sub-hub has its own INDEX for notes)
+├── install.sh           setup: symlinks skills into ~/.claude + ~/.codex, records HUB_ROOT
+│
+├── hubs/                YOUR KNOWLEDGE LIVES HERE, one sub-hub per domain
+│   └── example/         ships with the template; read for style, then replace
+│       ├── AGENTS.md    this hub's charter: scope declaration + note voice
+│       ├── INDEX.md     one line per note, the retrieval surface load-context matches
+│       ├── log.md       append-only record of every write
+│       ├── *.md         the notes (atomic findings, TL;DR first)
+│       └── works/       multi-step project folders (numbered files + status)
+│
+├── skills/              the three workflows, symlinked into your agents by install.sh
+│   ├── load-context/    read: INDEX match -> fzf fuzzy -> TL;DR -> body (bin/ tests/ evals/)
+│   ├── store-to-hub/    write: classify vs charters, dedup, propose-confirm (bin/ tests/ evals/)
+│   └── hub-lint/        maintain: deterministic gate + LLM pass for contradictions
+│
+├── scripts/
+│   ├── hub              CLI: create <name> (scaffold a sub-hub), list
+│   ├── hub-maintenance.sh   the weekly sweep: lint all hubs, git snapshot, notify on regressions
+│   └── citation-drift.sh    do notes cite code that changed or vanished upstream?
+│
+├── .claude/hooks/       small deterministic checks the skills and sweep call
+│   ├── validate-note.sh     write gate: secrets and format (hard fail)
+│   ├── check-index-updated.sh  every note has an INDEX entry
+│   ├── append-log.sh        one consistent log line per write
+│   ├── hub-lint.sh          the full gate: orphans, links, staleness (exit 1 on BLOCK)
+│   └── test-hooks.sh        tests for all of the above
+│
+├── template/            starter files `scripts/hub create` copies for a new sub-hub
+└── docs/
+    ├── note-format.md   the canonical note shape (what store-to-hub writes, lint checks)
+    ├── hub-guide.html   the field guide (also live on GitHub Pages)
+    └── adr/             design rationale with sources; read 0001 first
 ```
-hubs/<name>/     a full hub: AGENTS.md + INDEX.md + log.md + notes (+ works/)
-template/        starter scaffold for a new hub
-scripts/hub      CLI: create, list
-scripts/         hub-maintenance.sh (weekly sweep), citation-drift.sh
-skills/          load-context, store-to-hub, hub-lint (symlinked by install.sh)
-install.sh       setup
-.claude/hooks/   deterministic checks: validate-note, check-index, append-log, hub-lint
-docs/            note-format.md, hub-guide.html, adr/ (design rationale)
-```
+
+Rule of thumb: `hubs/` is yours, everything else is machinery you rarely touch.
 
 ## The model in five lines
 
