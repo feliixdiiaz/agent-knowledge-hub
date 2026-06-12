@@ -72,7 +72,10 @@ test("match: dark mode theme selects theme note and carries its TL;DR", () => {
 });
 
 test("fzf fallback: typo'd topic still finds the note (patietn -> patient)", (t) => {
-  if (!fzfAvailable()) return t.skip("fzf not installed; fuzzy fallback inactive");
+  // Opt-in by explicit env, not by machine state: the suite's outcome must be
+  // a function of the invocation, never of what happens to be installed.
+  if (!process.env.WITH_FZF) return t.skip("fuzzy tests are opt-in: WITH_FZF=1 node --test");
+  assert.ok(fzfAvailable(), "WITH_FZF=1 but fzf is not installed");
   const hub = makeFixtureHub();
   const hits = match("patietn", { hubs: [hub] });
   assert.equal(hits[0].file, "works/patient-consent/");
@@ -87,7 +90,9 @@ test("fzf fallback: only used when exact matching is empty", () => {
 
 test("match: no match returns empty, not a throw", () => {
   const hub = makeFixtureHub();
-  assert.deepEqual(match("kubernetes helm chart", { hubs: [hub] }), []);
+  // fuzzy: false pins the assertion to the exact matcher; with fuzzy on, the
+  // outcome would depend on the fzf install and version.
+  assert.deepEqual(match("kubernetes helm chart", { hubs: [hub], fuzzy: false }), []);
 });
 
 test("match: missing hub dir is skipped, not fatal", () => {

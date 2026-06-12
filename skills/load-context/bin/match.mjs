@@ -110,7 +110,7 @@ function toResult(hub, entry, { score, matchType, occurrences }) {
   };
 }
 
-export function match(topic, { hubs = defaultHubs(), limit = 3 } = {}) {
+export function match(topic, { hubs = defaultHubs(), limit = 3, fuzzy = true } = {}) {
   const terms = tokenize(topic);
   const results = [];
   const allEntries = [];
@@ -132,8 +132,9 @@ export function match(topic, { hubs = defaultHubs(), limit = 3 } = {}) {
   results.sort((a, b) => b.score - a.score || b.occurrences - a.occurrences);
   if (results.length > 0) return results.slice(0, limit);
 
-  // Exact matching found nothing: optional fzf fallback (skipped if no fzf).
-  if (allEntries.length > 0 && fzfAvailable()) {
+  // Exact matching found nothing: optional fzf fallback. Callers that need
+  // deterministic, environment-independent results pass fuzzy: false.
+  if (fuzzy && allEntries.length > 0 && fzfAvailable()) {
     return fzfFilter(topic, allEntries)
       .slice(0, limit)
       .map(({ hub, entry }) => toResult(hub, entry, { score: 0, matchType: "fuzzy", occurrences: 0 }));

@@ -47,4 +47,4 @@ Defaults to every sub-hub under `$HUB_ROOT/hubs/` (`~/workspace/agent-knowledge-
 
 - Selection is deterministic keyword matching over `INDEX.md`, so it is fast, cheap, and testable. The matcher is hub-only by design; claude-mem stays out of the scored retrieval. Quality depends on the hub `INDEX.md` one-liners + per-note `## TL;DR` staying current.
 - Tests: `cd ~/.claude/skills/load-context && node --test`.
-- Eval (selection quality vs real hubs): `node evals/run.mjs`.
+- Eval (selection quality vs real hubs): `node evals/run.mjs` (deterministic core, same result on any machine) and `node evals/run.mjs --fzf` (adds the fuzzy cases; requires fzf, fails loudly without it).

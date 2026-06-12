@@ -3,7 +3,10 @@
 // Runs the deterministic matcher against the REAL hubs over cases.json and
 // reports hit rate (expected note in top-N) and top-1 accuracy.
 //
-// Run: node evals/run.mjs
+// Run: node evals/run.mjs          (deterministic core: fuzzy disabled, same
+//                                    result on every machine, fzf or not)
+//      node evals/run.mjs --fzf    (also run the fuzzy cases; fails loudly if
+//                                    fzf is missing rather than skipping)
 // Exits nonzero if hit rate < THRESHOLD, so it works as a CI/regression gate.
 
 import fs from "node:fs";
@@ -15,10 +18,14 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const THRESHOLD = 0.8; // require 80% of cases to surface the expected note in top-N
 
 const { topN, cases: allCases } = JSON.parse(fs.readFileSync(path.join(HERE, "cases.json"), "utf8"));
-const haveFzf = fzfAvailable();
-const cases = allCases.filter((c) => !c.requiresFzf || haveFzf);
-const skipped = allCases.length - cases.length;
-if (skipped > 0) console.log(`(skipping ${skipped} fuzzy case(s): fzf not installed)\n`);
+const runFzf = process.argv.includes("--fzf");
+if (runFzf && !fzfAvailable()) {
+  console.error("FAIL: --fzf requested but fzf is not installed (brew/apt install fzf)");
+  process.exit(2);
+}
+const cases = allCases.filter((c) => !c.requiresFzf || runFzf);
+const omitted = allCases.length - cases.length;
+if (omitted > 0) console.log(`(${omitted} fuzzy case(s) not selected; opt in with --fzf)\n`);
 
 let hits = 0;
 let topOk = 0;
@@ -26,7 +33,9 @@ let topApplicable = 0;
 const rows = [];
 
 for (const c of cases) {
-  const results = match(c.topic, { limit: topN });
+  // Core cases run with fuzzy disabled so the result cannot depend on
+  // whether fzf happens to be installed; fuzzy cases opt in explicitly.
+  const results = match(c.topic, { limit: topN, fuzzy: Boolean(c.requiresFzf) });
   const files = results.map((r) => r.file);
   const inTopN = files.includes(c.expect);
   const isTop = results[0]?.file === c.expect;

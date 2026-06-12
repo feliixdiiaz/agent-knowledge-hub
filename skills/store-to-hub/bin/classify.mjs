@@ -35,9 +35,9 @@ export function listHubs(root = hubsRoot()) {
 export function classify(topic, { root = hubsRoot() } = {}) {
   const hubs = listHubs(root);
   // Dedup needs precision, not recall: a fuzzy subsequence hit is a retrieval
-  // aid ("did you mean"), never an append target. Exact INDEX overlaps only.
-  const dedupHits = match(topic, { hubs: hubs.map((h) => h.dir), limit: 3 })
-    .filter((h) => h.matchType !== "fuzzy");
+  // aid ("did you mean"), never an append target. fuzzy: false also keeps
+  // classification deterministic regardless of whether fzf is installed.
+  const dedupHits = match(topic, { hubs: hubs.map((h) => h.dir), limit: 3, fuzzy: false });
   return { candidateHubs: hubs.map(({ name, charter }) => ({ name, charter })), dedupHits };
 }
 
